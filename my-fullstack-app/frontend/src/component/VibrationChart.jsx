@@ -3,7 +3,7 @@
 // import { saveAs } from 'file-saver';
 // import html2canvas from 'html2canvas';
 
-// const API_BASE_URL = 'http://localhost:8000';
+// const API_BASE_URL = 'https://vibration-1.onrender.com';
 
 // export default function VibrationChart() {
 //   const [historicalData, setHistoricalData] = useState([]);
