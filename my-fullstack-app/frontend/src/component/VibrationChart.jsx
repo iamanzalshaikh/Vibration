@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { RefreshCw, Download, FileText, Camera, Activity, TrendingUp, AlertTriangle, Clock, Wifi, WifiOff, AlertCircle } from 'lucide-react';
+import { RefreshCw, FileText, Camera, Activity, TrendingUp, AlertTriangle, Clock, Wifi, WifiOff } from 'lucide-react';
 
 const API_BASE_URL = 'https://vibration-1.onrender.com';
 
@@ -12,36 +12,30 @@ function VibrationChart() {
   const [isLoading, setIsLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(null);
   const [anomalyCount, setAnomalyCount] = useState(0);
-  const [error, setError] = useState(null);
-  const [connectionStatus, setConnectionStatus] = useState('connecting');
+  const [connectionStatus, setConnectionStatus] = useState('connected');
   const chartRef = useRef(null);
 
   const formatTime = (isoString) => {
     try {
       const date = new Date(isoString);
       
-      // Check if the date is valid
       if (isNaN(date.getTime())) {
-        console.warn('Invalid date string:', isoString);
         return new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit' });
       }
       
-      // Format time with proper timezone handling
       return date.toLocaleTimeString('en-IN', { 
         hour12: false, 
         hour: '2-digit', 
         minute: '2-digit',
-        timeZone: 'Asia/Kolkata' // Indian timezone
+        timeZone: 'Asia/Kolkata'
       });
     } catch (error) {
-      console.error('Error formatting time:', error, isoString);
       return new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit' });
     }
   };
 
   const fetchHistoricalData = async () => {
     try {
-      console.log('Fetching historical data from:', `${API_BASE_URL}/vibration`);
       const res = await fetch(`${API_BASE_URL}/vibration`, {
         method: 'GET',
         headers: {
@@ -54,23 +48,17 @@ function VibrationChart() {
       }
       
       const data = await res.json();
-      console.log('Historical data received:', data);
-      
-      // Handle different response structures
       const vibrationData = data.data || data || [];
       setHistoricalData(vibrationData);
       setAnomalyCount(vibrationData.filter(item => item.anomaly).length);
       setConnectionStatus('connected');
-      setError(null);
     } catch (err) {
-      console.error('Error fetching historical data:', err);
-      setError(`Failed to fetch historical data: ${err.message}`);
       setConnectionStatus('disconnected');
       
       // Set dummy data for testing
       const now = new Date();
       const dummyData = Array.from({ length: 50 }, (_, i) => {
-        const timestamp = new Date(now.getTime() - (50 - i) * 60000); // Go back 50 minutes, then forward
+        const timestamp = new Date(now.getTime() - (50 - i) * 60000);
         return {
           timestamp: timestamp.toISOString(),
           vibration: Math.sin(i * 0.1) * 2 + Math.random() * 0.5 + 5,
@@ -84,7 +72,6 @@ function VibrationChart() {
 
   const fetchPredictions = async (steps = 10) => {
     try {
-      console.log('Fetching predictions from:', `${API_BASE_URL}/predict?steps=${steps}`);
       const res = await fetch(`${API_BASE_URL}/predict?steps=${steps}`, {
         method: 'GET',
         headers: {
@@ -97,16 +84,10 @@ function VibrationChart() {
       }
       
       const data = await res.json();
-      console.log('Predictions received:', data);
-      
-      // Handle different response structures
       const predictionData = data.data || data || [];
       setPredictions(predictionData);
       setConnectionStatus('connected');
-      setError(null);
     } catch (err) {
-      console.error('Error fetching predictions:', err);
-      setError(`Failed to fetch predictions: ${err.message}`);
       setConnectionStatus('disconnected');
       
       // Set dummy predictions for testing
@@ -197,7 +178,6 @@ function VibrationChart() {
 
   const exportToPNG = async () => {
     if (chartRef.current) {
-      // Simulate export for demo - in real app you'd use html2canvas
       const canvas = document.createElement('canvas');
       canvas.width = 800;
       canvas.height = 600;
@@ -258,21 +238,14 @@ function VibrationChart() {
                   <Wifi className="w-4 h-4 text-green-600" />
                   <span className="text-sm font-medium text-green-600">Connected</span>
                 </>
-              ) : connectionStatus === 'disconnected' ? (
+              ) : (
                 <>
                   <WifiOff className="w-4 h-4 text-red-600" />
                   <span className="text-sm font-medium text-red-600">Disconnected</span>
                 </>
-              ) : (
-                <>
-                  <RefreshCw className="w-4 h-4 text-yellow-600 animate-spin" />
-                  <span className="text-sm font-medium text-yellow-600">Connecting...</span>
-                </>
               )}
             </div>
           </div>
-          
-
         </div>
 
         {/* Stats Cards */}
