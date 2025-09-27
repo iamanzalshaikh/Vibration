@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { RefreshCw, Download, FileText, Camera, Activity, TrendingUp, AlertTriangle, Clock, Wifi, WifiOff, AlertCircle } from 'lucide-react';
 
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = 'https://vibration-1.onrender.com';
 
 function VibrationChart() {
   const [historicalData, setHistoricalData] = useState([]);
